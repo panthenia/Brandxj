@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.p.DrawMap"
+          android:versionCode="1"
+          android:versionName="1.0">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-sdk android:minSdkVersion="18"/>
+    <application
+            android:label="@string/app_name"
+            android:icon="@drawable/earthscan"
+            android:name=".PublicData">
+        <activity
+                android:name="MyActivity"
+                android:launchMode="standard"
+                android:screenOrientation="portrait"
+                android:theme="@android:style/Theme.Holo.Light"
+                android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:theme="@android:style/Theme.Holo.Light"
+                android:screenOrientation="portrait"
+                android:launchMode="standard"
+
+                android:name=".LoginActivity"
+                >
+        </activity>
+        <service android:name=".NetWorkService"/>
+        <activity android:name=".NetworkActivity"
+                  android:launchMode="standard"
+                  android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.Holo.Light"
+                />
+        <activity
+                android:theme="@android:style/Theme.Holo.Light"
+
+
+                android:name=".ShowActivity"/>
+        <!-- sdk服务 -->
+        <service android:name="com.lef.ibeacon.service.UpdateService" />
+        <service
+                android:name="com.lef.ibeacon.service.IBeaconService"
+                android:enabled="true"
+                android:exported="true"
+                android:isolatedProcess="false"
+                android:label="iBeacon" >
+        </service>
+        <service
+                android:name="com.lef.ibeacon.IBeaconIntentProcessor"
+                android:enabled="true" >
+            <meta-data
+                    android:name="background"
+                    android:value="true" />
+
+            <intent-filter android:priority="1" >
+                <action android:name="com.lef.ibeacon.DID_RANGING" />
+                <action android:name="com.lef.ibeacon.DID_MONITORING" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
