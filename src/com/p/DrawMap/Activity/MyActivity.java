@@ -15,6 +15,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lef.scanner.*;
@@ -33,12 +34,12 @@ public class MyActivity extends Activity implements
     public static final int REQUEST_FINISH_SUCCESS = 0;
     public static final int KEY_TIME_OUT = 4;
     public static final int REQUEST_FINISH_FAIL = 3;
-    public static final int UPLOAD_WAIT_SUCCESS = 5;
-    public static final int UPLOAD_WAIT_FAIL = 6;
 
     private IBeaconManager iBeaconManager;
     ScanView scanView = null;
     Button btSee,btReset,btUpload,btWhite;
+    boolean scanStoped = false;
+    ImageView stopImage = null;
     Handler mhandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -118,6 +119,26 @@ public class MyActivity extends Activity implements
             public void onClick(View v) {
                 Intent intent = new Intent(MyActivity.this,BeaconFilterActivity.class);
                 MyActivity.this.startActivity(intent);
+            }
+        });
+        stopImage = (ImageView)findViewById(R.id.bt_stop_run);
+        stopImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (scanStoped){
+                    scanStoped = false;
+                    stopImage.setImageResource(R.drawable.f04c);
+                    if (!iBeaconManager.isBound(MyActivity.this)){
+                        iBeaconManager.bind(MyActivity.this);
+                    }
+                    scanView.setEnabled(true);
+                }else{
+                    scanStoped = true;
+                    stopImage.setImageResource(R.drawable.f051);
+                    if (iBeaconManager.isBound(MyActivity.this))
+                        iBeaconManager.unBind(MyActivity.this);
+                    scanView.setEnabled(false);
+                }
             }
         });
         btReset.setOnClickListener(new View.OnClickListener() {
@@ -304,11 +325,9 @@ public class MyActivity extends Activity implements
                                                 Region region) {
                 Log.d("filter","-------------------------------");
 
-                Iterator<IBeacon> iterator = iBeacons.iterator();
-                while (iterator.hasNext()) {
-                    IBeacon temp = iterator.next();
-                    Log.d("filter",temp.getBluetoothAddress()+"-"+temp.getProximityUuid()+"-"+temp.getMajor());
-                    if(PublicData.getInstance().isUnderFilter(temp)) {
+                for (IBeacon temp : iBeacons) {
+                    Log.d("filter", temp.getBluetoothAddress() + "-" + temp.getProximityUuid() + "-" + temp.getMajor());
+                    if (PublicData.getInstance().isUnderFilter(temp)) {
                         if (!PublicData.getInstance().checkBeaconSet.contains(temp.getBluetoothAddress())) {
                             PublicData.getInstance().beacons.add(temp);
                             PublicData.getInstance().checkBeaconSet.add(temp.getBluetoothAddress());

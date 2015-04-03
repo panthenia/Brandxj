@@ -11,18 +11,18 @@ import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.lef.scanner.IBeacon;
-import com.p.DrawMap.Utils.DataUtil;
 import com.p.DrawMap.R;
+import com.p.DrawMap.Utils.DataUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Filter;
 
 /**
  * Created by p on 2015/3/3.
+ *
  */
 public class PublicData extends Application {
     private static PublicData self;
@@ -68,13 +68,12 @@ public class PublicData extends Application {
         this.ip = ip;
     }
     private String user,psw;
-
     public String getPsw() {
         return psw;
     }
     public boolean isUnderFilter(IBeacon ibeancon){
         for(BeaconFilter filter:beaconFilters){
-            if (filter.major.contains(String.valueOf(ibeancon.getMajor())) && filter.uuid.contains(ibeancon.getProximityUuid()))
+            if (filter.major.contains(String.valueOf(ibeancon.getMajor())) || filter.uuid.contains(ibeancon.getProximityUuid()))
                 return true;
         }
         return false;
@@ -133,7 +132,7 @@ public class PublicData extends Application {
     public String getMd5(String data){
 
         md5_encriptor.reset();
-        byte[] data_byte = null;
+        byte[] data_byte;
         data_byte = data.getBytes();
 
         byte[] hash_data = md5_encriptor.digest(data_byte);
@@ -151,13 +150,14 @@ public class PublicData extends Application {
     public boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) {
+            return false;
         } else {
             //如果仅仅是用来判断网络连接
             //则可以使用 cm.getActiveNetworkInfo().isAvailable();
             NetworkInfo[] info = cm.getAllNetworkInfo();
             if (info != null) {
-                for (int i = 0; i < info.length; i++) {
-                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                for (NetworkInfo anInfo : info) {
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
                         return true;
                     }
                 }
@@ -172,7 +172,7 @@ public class PublicData extends Application {
     public void getFiltersInDb(){
         SQLiteDatabase db = du.getReadableDatabase();
         String sql;
-        Cursor cursor = null;
+        Cursor cursor;
         // area text,type text,time text,val text
         sql = "select * from filter";
         try {
@@ -187,6 +187,7 @@ public class PublicData extends Application {
                 }
             }
         } catch (SQLException e) {
+
         } finally {
             db.close();
         }
@@ -276,7 +277,7 @@ public class PublicData extends Application {
     public void getCheckedBeaconInDb() {
         SQLiteDatabase db = du.getReadableDatabase();
         String sql;
-        Cursor cursor = null;
+        Cursor cursor;
         // area text,type text,time text,val text
         sql = "select * from unupbeacon";
         try {

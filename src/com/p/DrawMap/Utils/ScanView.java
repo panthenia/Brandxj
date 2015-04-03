@@ -18,7 +18,7 @@ public class ScanView extends View {
     int raduis = 10;
     int alpha = 250;
     int findNum = PublicData.getInstance().beacons.size();
-    boolean flag = true;
+    boolean enbled = true;
     public ScanView(Context context, AttributeSet attributeSet){
         super(context,attributeSet);
         mPaint = new Paint();
@@ -26,11 +26,15 @@ public class ScanView extends View {
         wpaint2 = new Paint();
 
     }
+    public void setEnabled(boolean e){
+        enbled = e;
+    }
     public void setFindNum(int newNum){
         findNum = newNum;
     }
     public void rePaint(){
-        invalidate();
+        if(enbled)
+            invalidate();
     }
 
     @Override
