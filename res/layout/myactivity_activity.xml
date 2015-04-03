@@ -4,7 +4,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <com.p.DrawMap.ScanView
+    <com.p.DrawMap.Utils.ScanView
             android:id="@+id/scan_view"
             android:layout_above="@+id/bts_layout"
             android:layout_width="match_parent"
@@ -39,6 +39,16 @@
                 android:id="@+id/bt_upload"
                 android:layout_weight="1"
                 android:text="上报"
+                android:textColor="#ffffff"
+                android:background="@drawable/backcolor_norock"
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
+        <Button
+                android:id="@+id/bt_white"
+                android:layout_weight="1"
+                android:text="白名单"
                 android:textColor="#ffffff"
                 android:background="@drawable/backcolor_norock"
 

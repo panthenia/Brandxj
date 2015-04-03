@@ -14,9 +14,9 @@
     <application
             android:label="@string/app_name"
             android:icon="@drawable/earthscan"
-            android:name=".PublicData">
+            android:name=".DataType.PublicData">
         <activity
-                android:name="MyActivity"
+                android:name=".Activity.MyActivity"
                 android:launchMode="standard"
                 android:screenOrientation="portrait"
                 android:theme="@android:style/Theme.Holo.Light"
@@ -31,11 +31,11 @@
                 android:screenOrientation="portrait"
                 android:launchMode="standard"
 
-                android:name=".LoginActivity"
+                android:name=".Activity.LoginActivity"
                 >
         </activity>
-        <service android:name=".NetWorkService"/>
-        <activity android:name=".NetworkActivity"
+        <service android:name=".Utils.NetWorkService"/>
+        <activity android:name=".Activity.NetworkActivity"
                   android:launchMode="standard"
                   android:screenOrientation="portrait"
                   android:theme="@android:style/Theme.Holo.Light"
@@ -44,7 +44,11 @@
                 android:theme="@android:style/Theme.Holo.Light"
 
 
-                android:name=".ShowActivity"/>
+                android:name=".Activity.ShowActivity"/>
+        <activity android:name=".Activity.BeaconFilterActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@android:style/Theme.Holo.Light"
+                />
         <!-- sdk服务 -->
         <service android:name="com.lef.ibeacon.service.UpdateService" />
         <service

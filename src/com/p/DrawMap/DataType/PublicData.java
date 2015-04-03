@@ -1,4 +1,4 @@
-package com.p.DrawMap;
+package com.p.DrawMap.DataType;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,12 +11,15 @@ import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.lef.scanner.IBeacon;
+import com.p.DrawMap.Utils.DataUtil;
+import com.p.DrawMap.R;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Filter;
 
 /**
  * Created by p on 2015/3/3.
@@ -26,6 +29,7 @@ public class PublicData extends Application {
     public ArrayList<IBeacon> beacons = new ArrayList<IBeacon>();
     public HashSet<String> checkBeaconSet = new HashSet<String>();
     public HashSet<String> uploadBeaconSet = new HashSet<String>();
+    public ArrayList<BeaconFilter> beaconFilters = new ArrayList<BeaconFilter>();
     public DataUtil du;
     private String ip;
     public MessageDigest md5_encriptor = null;
@@ -68,7 +72,13 @@ public class PublicData extends Application {
     public String getPsw() {
         return psw;
     }
-
+    public boolean isUnderFilter(IBeacon ibeancon){
+        for(BeaconFilter filter:beaconFilters){
+            if (filter.major.contains(String.valueOf(ibeancon.getMajor())) && filter.uuid.contains(ibeancon.getProximityUuid()))
+                return true;
+        }
+        return false;
+    }
     public void setPsw(String psw) {
         this.psw = psw;
     }
@@ -106,6 +116,7 @@ public class PublicData extends Application {
             e.printStackTrace();
         }
         getCheckedBeaconInDb();
+        getFiltersInDb();
     }
     public static PublicData getInstance(){
         return self;
@@ -157,6 +168,60 @@ public class PublicData extends Application {
     public String getImei() {
         return ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
                 .getDeviceId();
+    }
+    public void getFiltersInDb(){
+        SQLiteDatabase db = du.getReadableDatabase();
+        String sql;
+        Cursor cursor = null;
+        // area text,type text,time text,val text
+        sql = "select * from filter";
+        try {
+            cursor = db.rawQuery(sql, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {//直到返回false说明表中到了数据末尾
+                    BeaconFilter filter = new BeaconFilter();
+                    //Log.d("savebeacon",cursor.getString(cursor.getColumnIndex("mac_id")));
+                    filter.uuid = cursor.getString(cursor.getColumnIndex("uuid"));
+                    filter.major = cursor.getString(cursor.getColumnIndex("major"));
+                    beaconFilters.add(filter);
+                }
+            }
+        } catch (SQLException e) {
+        } finally {
+            db.close();
+        }
+    }
+    public boolean saveFilter2Db(BeaconFilter filter){
+        boolean result = true;
+        SQLiteDatabase db = du.getReadableDatabase();
+        String sql;
+        // area text,type text,time text,val text
+
+        sql = "insert into filter(uuid,major) values('";
+        sql += filter.uuid + "','" + filter.major +"')";
+        try {
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            db.close();
+        }
+        Log.d("save beacon",String.valueOf(result));
+        return result;
+    }
+    public void removeFilterFromDb(BeaconFilter filter){
+        SQLiteDatabase db = du.getReadableDatabase();
+
+        String sql = "delete from filter where  uuid = '"+filter.uuid+"' and major = '"+filter.major+"'";
+        try {
+            db.execSQL(sql);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
     public boolean saveCheckBeacon2Db(IBeacon iBeacon) {
         boolean result = true;

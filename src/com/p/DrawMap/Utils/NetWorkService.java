@@ -1,4 +1,4 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Utils;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import com.lef.scanner.IBeacon;
+import com.p.DrawMap.Activity.LoginActivity;
+import com.p.DrawMap.Activity.MyActivity;
+import com.p.DrawMap.DataType.PublicData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

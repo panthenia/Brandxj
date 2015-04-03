@@ -1,4 +1,4 @@
-package com.p.DrawMap;
+package com.p.DrawMap.DataType;
 
 import com.lef.scanner.IBeacon;
 

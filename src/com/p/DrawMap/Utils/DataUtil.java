@@ -1,8 +1,9 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Utils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.p.DrawMap.R;
 
 /**
  * Created by p on 14-4-23.
@@ -25,6 +26,7 @@ public class DataUtil extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
         db.execSQL(ctx.getString(R.string.create_unupload_beacon_table));
+        db.execSQL(ctx.getString(R.string.create_filter_table));
     }
 
     @Override

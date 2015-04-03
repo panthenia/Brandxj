@@ -1,4 +1,4 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Activity;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+import com.p.DrawMap.Utils.AroundListAdapter;
+import com.p.DrawMap.DataType.PublicData;
+import com.p.DrawMap.R;
 
 /**
  * Created by p on 2015/3/3.

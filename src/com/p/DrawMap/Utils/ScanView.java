@@ -1,12 +1,11 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
+import com.p.DrawMap.DataType.PublicData;
 
 
 /**
@@ -55,8 +54,8 @@ public class ScanView extends View {
             alpha = 250;
         }
         else {
-            raduis += 10;
-            alpha -= 10;
+            raduis += 5;
+            alpha -= 250/((getWidth()/3)/5);
         }
         mPaint.setAlpha(alpha);
         canvas.drawCircle(getWidth() / 2, (getHeight() / 8)*3, raduis, mPaint);

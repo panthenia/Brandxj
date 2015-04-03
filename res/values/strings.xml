@@ -9,4 +9,7 @@
     <string name="create_unupload_beacon_table">create table if not exists unupbeacon
 	    (mac_id text,uuid text, rssi text,  major  text,   minor  text);
     </string>
+    <string name="create_filter_table">create table if not exists filter
+	    (uuid text,major text);
+    </string>
 </resources>

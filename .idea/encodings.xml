@@ -10,6 +10,6 @@
     <file url="file://$PROJECT_DIR$/res/drawable-mdpi/button_shape.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/res/drawable-xhdpi/backcolor.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/res/drawable-xhdpi/button_shape.xml" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/com/p/DrawMap/AroundListAdapter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/p/DrawMap/Utils/AroundListAdapter.java" charset="UTF-8" />
   </component>
 </project>

@@ -1,9 +1,8 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Activity;
 
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.p.DrawMap.DataType.PublicData;
+import com.p.DrawMap.R;
 
 
 public class NetworkActivity extends Activity {

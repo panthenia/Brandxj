@@ -1,4 +1,4 @@
-package com.p.DrawMap;
+package com.p.DrawMap.Activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,14 +13,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lef.scanner.*;
+import com.p.DrawMap.Utils.NetWorkService;
+import com.p.DrawMap.DataType.PublicData;
+import com.p.DrawMap.R;
+import com.p.DrawMap.Utils.ScanView;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class MyActivity extends Activity implements
 
     private IBeaconManager iBeaconManager;
     ScanView scanView = null;
-    Button btSee,btReset,btUpload;
+    Button btSee,btReset,btUpload,btWhite;
     Handler mhandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -111,6 +112,14 @@ public class MyActivity extends Activity implements
         btReset = (Button)findViewById(R.id.bt_reset);
         btSee = (Button)findViewById(R.id.bt_see);
         btUpload = (Button)findViewById(R.id.bt_upload);
+        btWhite = (Button)findViewById(R.id.bt_white);
+        btWhite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyActivity.this,BeaconFilterActivity.class);
+                MyActivity.this.startActivity(intent);
+            }
+        });
         btReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +302,22 @@ public class MyActivity extends Activity implements
 
             public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
                                                 Region region) {
+                Log.d("filter","-------------------------------");
+
+                Iterator<IBeacon> iterator = iBeacons.iterator();
+                while (iterator.hasNext()) {
+                    IBeacon temp = iterator.next();
+                    Log.d("filter",temp.getBluetoothAddress()+"-"+temp.getProximityUuid()+"-"+temp.getMajor());
+                    if(PublicData.getInstance().isUnderFilter(temp)) {
+                        if (!PublicData.getInstance().checkBeaconSet.contains(temp.getBluetoothAddress())) {
+                            PublicData.getInstance().beacons.add(temp);
+                            PublicData.getInstance().checkBeaconSet.add(temp.getBluetoothAddress());
+                            mhandler.sendEmptyMessage(FIND_NEW_BEACON);
+                            PublicData.getInstance().saveCheckBeacon2Db(temp);
+                        }
+                    }
+                    //
+                }
                 //if (ProgressBarVisibile) {
                 //    handler.sendEmptyMessage(PROGRESSBARGONE);
                 // }
@@ -316,20 +341,7 @@ public class MyActivity extends Activity implements
                 // TODO Auto-generated method stub
                 // beaconDataListA.addAll(iBeacons);
                 // handler.sendEmptyMessage(UPDATEUI);
-                Iterator<IBeacon> iterator = iBeacons.iterator();
-                while (iterator.hasNext()) {
-                    IBeacon temp = iterator.next();
-                    //Log.d("uuid",temp.getProximityUuid());
-                    if(temp.getProximityUuid().contains("fda50693-a4e2-4fb1-afcf-c6eb07647825") && temp.getMajor() == 10001) {
-                        if (!PublicData.getInstance().checkBeaconSet.contains(temp.getBluetoothAddress())) {
-                            PublicData.getInstance().beacons.add(temp);
-                            PublicData.getInstance().checkBeaconSet.add(temp.getBluetoothAddress());
-                            mhandler.sendEmptyMessage(FIND_NEW_BEACON);
-                            PublicData.getInstance().saveCheckBeacon2Db(temp);
-                        }
-                    }
-                    //
-                }
+
             }
 
             @Override
