@@ -73,8 +73,16 @@ public class PublicData extends Application {
     }
     public boolean isUnderFilter(IBeacon ibeancon){
         for(BeaconFilter filter:beaconFilters){
-            if (filter.major.contains(String.valueOf(ibeancon.getMajor())) || filter.uuid.contains(ibeancon.getProximityUuid()))
-                return true;
+            if (filter.uuid.length() > 0 && filter.major.length() > 0){
+                if (String.valueOf(ibeancon.getMajor()).contains(filter.major) && ibeancon.getProximityUuid().contains(filter.uuid))
+                    return true;
+            }else if (filter.major.length() > 0){
+                if (String.valueOf(ibeancon.getMajor()).contains(filter.major))
+                    return true;
+            }else if (filter.uuid.length() > 0){
+                if (ibeancon.getProximityUuid().contains(filter.uuid))
+                    return true;
+            }
         }
         return false;
     }
