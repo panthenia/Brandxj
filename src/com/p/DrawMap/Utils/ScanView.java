@@ -17,6 +17,7 @@ public class ScanView extends View {
     Paint wpaint2 = null;
     int raduis = 10;
     int alpha = 250;
+    int countSec = 0;
     int findNum = PublicData.getInstance().beacons.size();
     boolean enbled = true;
     public ScanView(Context context, AttributeSet attributeSet){
@@ -25,6 +26,19 @@ public class ScanView extends View {
         wpaint1 = new Paint();
         wpaint2 = new Paint();
 
+        mPaint.setColor(0x0180ff);
+        mPaint.setAlpha(alpha);
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(150);
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        wpaint1.setColor(0xff0180ff);
+        wpaint1.setAntiAlias(true);
+        wpaint1.setStrokeWidth(10);
+        wpaint1.setTextSize(50);
+        wpaint1.setTextAlign(Paint.Align.CENTER);
+    }
+    public void reSetCountSec(){
+        countSec = 0;
     }
     public void setEnabled(boolean e){
         enbled = e;
@@ -33,38 +47,22 @@ public class ScanView extends View {
         findNum = newNum;
     }
     public void rePaint(){
-        if(enbled)
-            invalidate();
-    }
 
+        if(enbled){
+            countSec += 1;
+            invalidate();
+        }
+    }
+    public void addCountSec(){
+        if (enbled){
+
+        }
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mPaint.setColor(0x0180ff);
-        mPaint.setAlpha(alpha);
-        mPaint.setAntiAlias(true);
-        wpaint1.setColor(0xff0180ff);
-        wpaint1.setAntiAlias(true);
-        wpaint2.setAntiAlias(true);
-        wpaint2.setStyle(Paint.Style.STROKE);
-        wpaint2.setColor(0xff0180ff);
-        wpaint2.setTextSize(50);
-        wpaint1.setStrokeWidth(10);
-        wpaint1.setTextSize(100);
-        wpaint2.setTextAlign(Paint.Align.CENTER);
-        wpaint1.setTextAlign(Paint.Align.CENTER);
-        if(raduis > getWidth()/3){
-            raduis = 10;
-            alpha = 250;
-        }
-        else {
-            raduis += 5;
-            alpha -= 250/((getWidth()/3)/5);
-        }
-        mPaint.setAlpha(alpha);
-        canvas.drawCircle(getWidth() / 2, (getHeight() / 8)*3, raduis, mPaint);
-        canvas.drawText("已检测到Beacon数量",getWidth() / 2, (getHeight() / 8) *6,  wpaint2);
-        canvas.drawText(String.valueOf(findNum), getWidth() / 2, (getHeight() / 8) *7, wpaint1);
+        canvas.drawText(String.valueOf(countSec)+"S",getWidth() / 2, (getHeight() / 8)*3, mPaint);
+        canvas.drawText("扫描到"+String.valueOf(findNum)+"个Beacon", getWidth() / 2, (getHeight() / 8) *7, wpaint1);
 
     }
 

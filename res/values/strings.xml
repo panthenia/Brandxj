@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">品牌巡检工具</string>
+    <string name="app_name">Beacon扫描工具</string>
     <string name="upload">上报巡检到的Beacons</string>
     <string name="reset">巡检状态重置</string>
     <string name="see_scan">查看巡检到的Beacons</string>
     <string name="login_preference_name">login_preference</string>
     <string name="unupload_dbname">unupload.db</string>
     <string name="create_unupload_beacon_table">create table if not exists unupbeacon
-	    (mac_id text,uuid text, rssi text,  major  text,   minor  text);
+	    (mac_id text,uuid text, rssi text,  major  text,   minor  text,type text,timestamp text);
     </string>
-    <string name="create_filter_table">create table if not exists filter
-	    (uuid text,major text);
+    <string name="create_major_filter_table">create table if not exists major_filter
+	    (major text);
+    </string>
+    <string name="create_uuid_filter_table">create table if not exists uuid_filter
+	    (uuid text);
+    </string>
+    <string name="create_type_filter_table">create table if not exists type_filter
+	    (type text);
+    </string>
+    <string name="create_beacon_location_table">
+        create table if not exists beacon_location
+	    (mac_id text,rssi text, major text,date text);
     </string>
 </resources>

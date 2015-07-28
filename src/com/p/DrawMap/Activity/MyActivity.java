@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lef.scanner.*;
+import com.p.DrawMap.DataType.DBIbeancon;
 import com.p.DrawMap.Utils.NetWorkService;
 import com.p.DrawMap.DataType.PublicData;
 import com.p.DrawMap.R;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 public class MyActivity extends Activity implements
         com.lef.scanner.IBeaconConsumer{
     public static final int REDRAW_SCAN_VIEW = 1;
+    public static final int ADD_TIME_COUNT = 5;
     public static final int FIND_NEW_BEACON = 2;
     public static final int REQUEST_FINISH_SUCCESS = 0;
     public static final int KEY_TIME_OUT = 4;
@@ -49,7 +51,6 @@ public class MyActivity extends Activity implements
                     break;
                 case FIND_NEW_BEACON:
                     scanView.setFindNum(PublicData.getInstance().beacons.size());
-                    scanView.rePaint();
                     break;
                 case KEY_TIME_OUT:
                     new AlertDialog.Builder(MyActivity.this)
@@ -85,7 +86,7 @@ public class MyActivity extends Activity implements
                     ms.what = REDRAW_SCAN_VIEW;
                     mhandler.sendMessage(ms);
                     try {
-                        Thread.sleep(30);
+                        Thread.sleep(950);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -137,6 +138,8 @@ public class MyActivity extends Activity implements
                     stopImage.setImageResource(R.drawable.f051);
                     if (iBeaconManager.isBound(MyActivity.this))
                         iBeaconManager.unBind(MyActivity.this);
+                    scanView.reSetCountSec();
+                    PublicData.getInstance().saveBeaconStop2Db();
                     scanView.setEnabled(false);
                 }
             }
@@ -144,9 +147,14 @@ public class MyActivity extends Activity implements
         btReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int unupload = 0;
+                for (IBeacon ibeacon : PublicData.getInstance().beacons){
+                    if(!PublicData.getInstance().uploadBeaconSet.contains(ibeacon.getBluetoothAddress()))
+                        unupload++;
+                }
                 new AlertDialog.Builder(MyActivity.this)
                         .setTitle("警告")
-                        .setMessage("是否重置状态").setCancelable(false)
+                        .setMessage("有"+unupload+"个beacon数据未上传，是否重置状态").setCancelable(false)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
                             @Override
@@ -156,6 +164,7 @@ public class MyActivity extends Activity implements
                                 PublicData.getInstance().beacons.clear();
                                 PublicData.getInstance().uploadBeaconSet.clear();
                                 scanView.setFindNum(0);
+                                scanView.invalidate();
                                 PublicData.getInstance().removeCheckedBeaconInDb();
                                 Toast.makeText(MyActivity.this,"状态重置成功！",Toast.LENGTH_SHORT).show();
                             }
@@ -225,7 +234,7 @@ public class MyActivity extends Activity implements
                 }
             }).create().show();
         } else {
-            iBeaconManager.setForegroundScanPeriod(800);
+            iBeaconManager.setForegroundScanPeriod(1000);
             iBeaconManager.bind(this);
         }
     }
@@ -323,19 +332,35 @@ public class MyActivity extends Activity implements
 
             public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
                                                 Region region) {
-                Log.d("filter","-------------------------------");
-
-                for (IBeacon temp : iBeacons) {
-                    Log.d("filter", temp.getBluetoothAddress() + "-" + temp.getProximityUuid() + "-" + temp.getMajor());
-                    if (PublicData.getInstance().isUnderFilter(temp)) {
-                        if (!PublicData.getInstance().checkBeaconSet.contains(temp.getBluetoothAddress())) {
-                            PublicData.getInstance().beacons.add(temp);
-                            PublicData.getInstance().checkBeaconSet.add(temp.getBluetoothAddress());
-                            mhandler.sendEmptyMessage(FIND_NEW_BEACON);
-                            PublicData.getInstance().saveCheckBeacon2Db(temp);
-                        }
+                //Log.d("filter","-------------------------------");
+                if (!scanStoped){
+                    for (IBeacon temp : iBeacons) {
+                        //Log.d("filter",temp.getProximityUuid() + "-" + temp.getMajor());
+                        if (PublicData.getInstance().isUnderFilter(temp)) {
+                            //Log.d("filter","yes");
+                            PublicData.getInstance().saveBeaconLocation2Db(temp);
+                            if (!PublicData.getInstance().checkBeaconSet.contains(temp.getBluetoothAddress())) {
+                                PublicData.getInstance().beacons.add(temp);
+                                PublicData.getInstance().checkBeaconSet.add(temp.getBluetoothAddress());
+                                mhandler.sendEmptyMessage(FIND_NEW_BEACON);
+                                PublicData.getInstance().saveCheckBeacon2Db(temp);
+                            }else{
+                                IBeacon rtarget = null;
+                                for(IBeacon b:PublicData.getInstance().beacons){
+                                    if(b.getBluetoothAddress().contains(temp.getBluetoothAddress()))
+                                        rtarget = b;
+                                }
+                                if (rtarget != null) {
+                                    if (rtarget.getMajor() != temp.getMajor() || rtarget.getMinor() != temp.getMinor()) {
+                                        PublicData.getInstance().beacons.remove(rtarget);
+                                        PublicData.getInstance().beacons.add(temp);
+                                        PublicData.getInstance().updateCheckBeaconInDb(temp);
+                                    }
+                                }
+                            }
+                        }//else Log.d("filter","no");
+                        //
                     }
-                    //
                 }
                 //if (ProgressBarVisibile) {
                 //    handler.sendEmptyMessage(PROGRESSBARGONE);

@@ -66,15 +66,24 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
         TextView tv_major = (TextView) holder.myview.findViewById(R.id.tv_major_val);
         if (tv_major != null)
             tv_major.setText(String.valueOf(mIBeaconDataset.get(position).getMajor()));
-        ImageView rssi_img = (ImageView) holder.myview.findViewById(R.id.rssi_image);
-        if (rssi_img != null)
-            rssi_img.setImageResource(getRSSIView(mIBeaconDataset.get(position)));
+        ImageView rssi_txt = (ImageView) holder.myview.findViewById(R.id.rssi_img);
+        if (rssi_txt != null)
+            rssi_txt.setImageResource(getRSSIView(mIBeaconDataset.get(position)));
         TextView tv_minor = (TextView) holder.myview.findViewById(R.id.tv_minor_val);
         if (tv_minor != null)
             tv_minor.setText(String.valueOf(mIBeaconDataset.get(position).getMinor()));
         TextView tv_id = (TextView) holder.myview.findViewById(R.id.tv_id);
         if (tv_id != null) {
             tv_id.setText(mIBeaconDataset.get(position).getBluetoothAddress());
+        }
+        TextView tv_uuid = (TextView)holder.myview.findViewById(R.id.tv_uuid);
+        if (tv_uuid != null) {
+            tv_uuid.setText(mIBeaconDataset.get(position).getProximityUuid());
+        }
+
+        TextView tv_type = (TextView)holder.myview.findViewById(R.id.tv_cmp);
+        if (tv_type != null) {
+            tv_type.setText(mIBeaconDataset.get(position).getName());
         }
         ImageView upload_img = (ImageView) holder.myview.findViewById(R.id.upload_img);
         if(publicData.uploadBeaconSet.contains(mIBeaconDataset.get(position).getBluetoothAddress())){
@@ -113,7 +122,7 @@ public class AroundListAdapter extends RecyclerView.Adapter<AroundListAdapter.Vi
 
     public Object getDataItem(int p) {
         if (p < mIBeaconDataset.size())
-            return mIBeaconDataset.get(p);
+             return mIBeaconDataset.get(p);
         else return null;
     }
 

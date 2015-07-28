@@ -1,6 +1,7 @@
 package com.p.DrawMap.Utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +17,26 @@ import java.util.ArrayList;
  */
 public class BeaconFilterAdapter extends BaseAdapter {
     Context context = null;
-    ArrayList<BeaconFilter> data = new ArrayList<BeaconFilter>();
+    ArrayList<String> data = new ArrayList<String>();
     LayoutInflater inflater = null;
-    public BeaconFilterAdapter(Context context){
+    String filterType = null;
+    public BeaconFilterAdapter(Context context,String type){
         context = context;
+        filterType = type;
         inflater = LayoutInflater.from(context);
     }
-    public void setData(ArrayList<BeaconFilter> data){
+    public void setData(ArrayList<String> data){
         this.data.clear();
         this.data.addAll(data);
+    }
+    public String getType(){
+        return filterType;
+    }
+    public void removeItem(int pos){
+        this.data.remove(pos);
+    }
+    public void addItem(String item){
+        data.add(item);
     }
     @Override
     public int getCount() {
@@ -43,23 +55,25 @@ public class BeaconFilterAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("newval-slash","---------------------");
+        Log.d("newval-getview-postion",String.valueOf(position));
         ViewHoldler holdler = null;
         //回收旧的view
         if (convertView != null){
             holdler = (ViewHoldler) convertView.getTag();
+            holdler.content.setText(data.get(position));
         }else{
             convertView = inflater.inflate(R.layout.whitelist_item,null);
             holdler = new ViewHoldler();
-            holdler.uuid = (TextView) convertView.findViewById(R.id.white_uuid);
-            holdler.major = (TextView) convertView.findViewById(R.id.white_major);
+            holdler.content = (TextView)convertView.findViewById(R.id.major_content);
+            Log.d("newval-getview-data",data.get(position));
+            holdler.content.setText(data.get(position));
             convertView.setTag(holdler);
         }
-        holdler.major.setText("Major:"+data.get(position).major);
-        holdler.uuid.setText("Uuid:"+data.get(position).uuid);
+
         return convertView;
     }
     class ViewHoldler{
-        TextView major;
-        TextView uuid;
+        TextView content;
     }
 }
